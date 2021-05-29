@@ -22,7 +22,7 @@ THRESH <- 1000
 
 set.seed(2021)
 
-n_true_models <- 10000 # 1,0000
+n_true_models <- 100
 n_calibration_runs <- c(500, 1000, 5000, 10000, 20000, 50000)
 set_targets_sets <- list(
   c("t1","t2","t3","t4"),
@@ -45,7 +45,7 @@ true_params <- drawParams(
 
 t1 <- Sys.time()
 
-cl <- parallel::makeForkCluster(7)
+cl <- parallel::makeForkCluster(detectCores()-1)
 doParallel::registerDoParallel(cl)
 
 res_mat <- foreach(i = 1:n_true_models, .combine = 'rbind') %dopar% {
@@ -121,4 +121,4 @@ parallel::stopCluster(cl)
 
 # dim(res_mat)
 
-saveRDS(res_mat_i, file = "res_mat_i.RDS")
+saveRDS(res_mat, file = "res_mat.RDS")
