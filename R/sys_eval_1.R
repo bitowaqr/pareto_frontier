@@ -37,7 +37,7 @@ true_params <- drawParams(
   pS1_S2 = runif(n_true_models, 0.01, 0.48), 
   RRS1_D = runif(n_true_models, 1, 4.5), 
   RRS2_D = runif(n_true_models, 1, 20)
-  )
+)
 
 
 # N_ROW <- 3 * n_true_models * length(n_calibration_runs) * length(set_targets_sets)
@@ -45,7 +45,7 @@ true_params <- drawParams(
 
 t1 <- Sys.time()
 
-cl <- parallel::makeForkCluster(7)
+cl <- parallel::makeForkCluster(detectCores()-1)
 doParallel::registerDoParallel(cl)
 
 res_mat <- foreach(i = 1:n_true_models, .combine = 'rbind') %dopar% {
@@ -54,24 +54,24 @@ res_mat <- foreach(i = 1:n_true_models, .combine = 'rbind') %dopar% {
     data = NA, 
     nrow = 3 * length(n_calibration_runs) * length(set_targets_sets), 
     ncol = 14
-    )
+  )
   
   true_model_i <- runTrueMarkov(params = true_params[i,], return_targets = T)
   true_inmb_i <- true_model_i$ce_res["nmb"]
   target_set_i <- true_model_i$targets
-
+  
   
   test_params <- drawParams(
     pS1_S2 = runif(max(n_calibration_runs), 0.01, 0.48),
     RRS1_D =  runif(max(n_calibration_runs), 1, 4.5),
     RRS2_D = runif(max(n_calibration_runs), 1, 20)
   )
-
+  
   calib_res <- runCalibration(
     params = test_params, 
     targets = target_set_i, 
     RUNS = max(n_calibration_runs)
-    )
+  )
   
   for(k in seq_along(n_calibration_runs)){
     
@@ -84,7 +84,7 @@ res_mat <- foreach(i = 1:n_true_models, .combine = 'rbind') %dopar% {
       selected_sets_ijk <- evalTargets(
         target_diff = calib_res$res_mat[calib_subset_k,], 
         indices = set_targets_sets[[j]]
-        )    
+      )    
       
       res_list_ijk <- evalRes(
         selected_sets_ijk, 
@@ -93,14 +93,14 @@ res_mat <- foreach(i = 1:n_true_models, .combine = 'rbind') %dopar% {
       
       res_ijk <- suppressWarnings(
         as.matrix(cbind(
-        "run" = i,
-        res_list_ijk$inmb_df,
-        res_list_ijk$params_df[,-1],
-        true_params_run = i,
-        n_calib = n_calibration_runs[k],
-        "pareto_n"  = length(selected_sets_ijk$pareto),
-        "n_study_size" = NA,
-        "true_inmb" = true_inmb_i
+          "run" = i,
+          res_list_ijk$inmb_df,
+          res_list_ijk$params_df[,-1],
+          true_params_run = i,
+          n_calib = n_calibration_runs[k],
+          "pareto_n"  = length(selected_sets_ijk$pareto),
+          "n_study_size" = NA,
+          "true_inmb" = true_inmb_i
         ))
       )
       
@@ -113,7 +113,7 @@ res_mat <- foreach(i = 1:n_true_models, .combine = 'rbind') %dopar% {
   
   return(res_mat_i)
 }
-  
+
 t1 - Sys.time()  
 parallel::stopCluster(cl)  
 
