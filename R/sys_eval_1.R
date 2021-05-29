@@ -121,4 +121,4 @@ parallel::stopCluster(cl)
 
 # dim(res_mat)
 
-saveRDS(res_mat_i, file = "res_mat_i.RDS")
+saveRDS(res_mat, file = "res_mat_i.RDS")
