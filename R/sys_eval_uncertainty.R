@@ -118,5 +118,5 @@ parallel::stopCluster(cl)
 
 
 # dim(res_uncertain)
-
-saveRDS(res_uncertain, file = "res_uncertain.RDS")
+save(res_uncertain, file = "res_uncertain.RData")
+# saveRDS(res_uncertain, file = "res_uncertain.RDS")
