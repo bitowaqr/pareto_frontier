@@ -22,7 +22,7 @@ THRESH <- 1000
 
 set.seed(2021)
 
-n_true_models <- 100000
+n_true_models <- 1000
 n_calibration_runs <- c(10000)
 set_targets_sets <- list(
   c("t1","t2","t3","t4"),
