@@ -1,6 +1,6 @@
-# RANDOMISTA 1
+# RANDOMISTA 2
 
-# EVALUATING PARETO FRONTIER PERFORMANCE ON TRUE TARGET SETS
+# EVALUATING PARETO FRONTIER PERFORMANCE ON UNCERTAIN TARGET SETS
 
 # rm(list=ls())
 
@@ -22,15 +22,15 @@ THRESH <- 1000
 
 set.seed(2021)
 
-n_true_models <- 10000
-n_calibration_runs <- c(500, 1000, 5000, 10000)
+n_true_models <- 10
+n_calibration_runs <- c(10000)
 set_targets_sets <- list(
   c("t1","t2","t3","t4"),
   c("t1","t5","t6"),
   c("t2","t5"),
   c("t1","t2","t3","t5","t6")
 )
-n_study_size = c(100, 500, 1000)
+
 
 # SIMULATION
 true_params <- drawParams(
@@ -38,6 +38,8 @@ true_params <- drawParams(
   RRS1_D = runif(n_true_models, 1, 4.5), 
   RRS2_D = runif(n_true_models, 1, 20)
 )
+
+n_study_size = round(runif(n_true_models, min = 100, max = 2000))
 
 
 # N_ROW <- 3 * n_true_models * length(n_calibration_runs) * length(set_targets_sets)
@@ -48,18 +50,19 @@ t1 <- Sys.time()
 cl <- parallel::makeForkCluster(detectCores()-1)
 doParallel::registerDoParallel(cl)
 
-res_mat <- foreach(i = 1:n_true_models, .combine = 'rbind') %dopar% {
+res_uncertain <- foreach(i = 1:n_true_models, .combine = 'rbind') %dopar% {
   
   res_mat_i <- matrix(
     data = NA, 
     nrow = 3 * length(n_calibration_runs) * length(set_targets_sets), 
-    ncol = 14
+    ncol = 13 # 14 - n_calib
   )
   
-  true_model_i <- runTrueMarkov(params = true_params[i,], return_targets = T)
+  true_model_i <- runTrueMarkov(params = true_params[i,], return_targets = F)
   true_inmb_i <- true_model_i$ce_res["nmb"]
-  target_set_i <- true_model_i$targets
   
+  
+  target_set_i <- simStudy(n = n_study_size[i], true_params[i,], HORIZON = 10)
   
   test_params <- drawParams(
     pS1_S2 = runif(max(n_calibration_runs), 0.01, 0.48),
@@ -73,43 +76,38 @@ res_mat <- foreach(i = 1:n_true_models, .combine = 'rbind') %dopar% {
     RUNS = max(n_calibration_runs)
   )
   
-  for(k in seq_along(n_calibration_runs)){
-    
-    calib_subset_k <- 1:n_calibration_runs[k]
-    
     for(j in seq_along(set_targets_sets)){
       
-      cat("\r   i =",i,";j=",j,";k=",k,";xxxxxx",sep = "")
+      cat("\r   i =",i,";j=",j,"xxxxxx",sep = "")
       
-      selected_sets_ijk <- evalTargets(
-        target_diff = calib_res$res_mat[calib_subset_k,], 
+      selected_sets_ij <- evalTargets(
+        target_diff = calib_res$res_mat, 
         indices = set_targets_sets[[j]]
       )    
       
-      res_list_ijk <- evalRes(
-        selected_sets_ijk, 
-        test_params[calib_subset_k,], 
+      res_list_ij <- evalRes(
+        selected_sets_ij, 
+        test_params, 
         true_inmb_i)
       
-      res_ijk <- suppressWarnings(
+      res_ij <- suppressWarnings(
         as.matrix(cbind(
           "run" = i,
-          res_list_ijk$inmb_df,
-          res_list_ijk$params_df[,-1],
+          res_list_ij$inmb_df,
+          res_list_ij$params_df[,-1],
           target_set = j,
-          n_calib = n_calibration_runs[k],
-          "pareto_n"  = length(selected_sets_ijk$pareto),
-          "n_study_size" = NA,
+          # n_calib = n_calibration_runs,
+          "pareto_n"  = length(selected_sets_ij$pareto),
+          "n_study_size" = n_study_size[i],
           "true_inmb" = true_inmb_i
         ))
       )
       
-      res_mat_i[which(is.na(res_mat_i[,1]))[1:3],] <- res_ijk
-      # res_mat[which(is.na(res_mat[,1]))[1:3],] <- res_ijk
+      res_mat_i[which(is.na(res_mat_i[,1]))[1:3],] <- res_ij
       
     }
     
-  }
+  
   
   return(res_mat_i)
 }
@@ -119,6 +117,6 @@ parallel::stopCluster(cl)
 
 
 
-# dim(res_mat)
+# dim(res_uncertain)
 
-saveRDS(res_mat, file = "res_mat.RDS")
+saveRDS(res_uncertain, file = "res_uncertain.RDS")

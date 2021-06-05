@@ -1,6 +1,6 @@
 # ANALYIS 1
 
-  # rm(list=ls())
+# rm(list=ls())
   
 # LOAD PACKAGES AND FUNCTIONS
   library(rPref)
