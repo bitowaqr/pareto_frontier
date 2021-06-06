@@ -293,3 +293,30 @@ evalRes <- function(selected_sets, test_params, true_inmb){
     params_df = params_df
   ))
 }
+
+
+
+# aggregation function formatter
+aggFormat <- function(x, digits = 0, show_median = F, show_range = F){
+  y_raw <- c("mean" = mean(x), "sd" = sd(x), quantile(x, c(0.5, 0.25, 0.75, 0, 1)))
+  y <- formatC(y_raw, digits = digits, format = "f", big.mark = ",")
+  y_fmt <- c(
+    "mean (SD)" = paste0(y[1], " (",y[2],")")
+  )
+  
+  if(show_median){
+    y_fmt <- c(y_fmt, "median (IQR)" = paste0(y[3], " (",y[4],"; ",y[5],")"))
+  }
+  
+  if(show_range){
+    y_fmt <- c(y_fmt, "range" = paste0("[",y[6], "; ",y[7],"]"))
+  }
+  y_fmt
+}
+
+# load object to file
+load_object <- function(file) {
+  tmp <- new.env()
+  load(file = file, envir = tmp)
+  tmp[[ls(tmp)[1]]]
+}
