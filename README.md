@@ -8,7 +8,7 @@ This repository contains a simulation study to assess the performance of the Par
 
 * The main analysis of the simulation study is provided in the `index.Rmd`
 
-* See [https://bitowaqr.github.io/pareto_frontier/](https://bitowaqr.github.io/pareto_frontier/) for the html version with results.
+* See [https://bitowaqr.github.io/pareto_frontier/index.html](https://bitowaqr.github.io/pareto_frontier/index.html) for the html version with results.
 
 * The `abstract.md` was submitted to the 43rd Annual North American SMDM Meeting.
 
