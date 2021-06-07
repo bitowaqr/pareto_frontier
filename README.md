@@ -14,5 +14,7 @@ This repository contains a simulation study to assess the performance of the Par
 
 * The original study by [Enns et al. 2015](https://journals.sagepub.com/doi/10.1177/0272989X14528382) can be found online.
 
+* [Krijkamp et al. (2018)](https://pubmed.ncbi.nlm.nih.gov/29587047/) have published a detailed R tutorial for the Sick-Sicker model
+
 
 Paul Schneider
