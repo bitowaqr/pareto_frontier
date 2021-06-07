@@ -13,7 +13,7 @@ Performance was assessed by comparing the estimated mean incremental net monetar
 
 
 # Results
-The Pareto Frontier approach generally provided less accurate results. Compared to the distance-based method, the mean absolute error of the incremental net monetary benefit was higher in almost all scenarios, ranging from +1,809 (4,749 vs. 2,940) and +11,125 (13,316 vs. 2,191). The variability of estimates was also significantly greater. However, in one specific scenario with stochastic targets, the Pareto Frontier approach performed better (-7,091; 21,095 vs. 28,185). It also consistently provided more accurate estimates for one of the three calibration parameters, while for the other two, the distance-based approach tended to be superior.
 
+The Pareto Frontier approach generally provided less accurate results compared to the distance-based method. The mean absolute error of the incremental net monetary benefit was higher in almost all scenarios, ranging from +1,809 (4,749 vs. 2,940) to +11,125 (13,316 vs. 2,191). We also observed a much greater variability of estimates within scenarios. However, for one specific scenario with stochastic targets, the Pareto Frontier approach performed better, i.e. had a lower absolute error of -7,091 (21,095 vs. 28,185). Results for the calibration parameters were more mixed, but by and large, the distance-based method tended to provide more accurate estimates for two of the three parameters.  
 # Conclusion
 The Pareto Frontier approach generally performed worse than a simple, distance-based objective function. However, further research is needed to validate our findings in other, more complex models.
